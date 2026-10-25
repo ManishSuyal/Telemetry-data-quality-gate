@@ -1,0 +1,7 @@
+-- 06: Did the gate catch what I planted? Compare answer key to gate result.
+-- Expected mapping: clean->pass, late->late, duplicate->duplicate, missing_field->missing_field.
+
+SELECT fault_label, result, COUNT(*) AS events
+FROM `telemetry-data-quality-gate.Dq.events_checked`
+GROUP BY 1, 2
+ORDER BY 1, 2;

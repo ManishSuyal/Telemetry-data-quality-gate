@@ -1,0 +1,7 @@
+-- 08: Save the expected schema (the "contract") for the event table.
+
+
+CREATE OR REPLACE TABLE `telemetry-data-quality-gate.Dq.schema_contract` AS
+SELECT column_name, data_type
+FROM `telemetry-data-quality-gate.Dq.INFORMATION_SCHEMA.COLUMNS`
+WHERE table_name = 'events_seeded' AND column_name != 'fault_label';

@@ -1,0 +1,9 @@
+-- 11: The gate as two views. Dashboards read only events_trusted.
+-- Engineers investigate events_quarantine (rows are kept, never deleted).
+
+
+CREATE OR REPLACE VIEW `telemetry-data-quality-gate.Dq.events_quarantine` AS
+SELECT * FROM `YOUR_PROJECT.dq.events_checked` WHERE result = 'pass';
+
+CREATE OR REPLACE VIEW `telemetry-data-quality-gate.Dq.events_quarantine` AS
+SELECT * FROM `telemetry-data-quality-gate.Dq.events_checked` WHERE result != 'pass'

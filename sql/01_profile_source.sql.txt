@@ -1,0 +1,9 @@
+-- 01: Profile the source data (GitHub Archive, one day).
+-- Question: how many events, are IDs unique, are any key fields empty?
+SELECT
+  COUNT(*)                    AS events,
+  COUNT(DISTINCT id)          AS distinct_ids,
+  COUNTIF(actor.id IS NULL)   AS null_actor,
+  COUNTIF(repo.id IS NULL)    AS null_repo,
+  COUNTIF(created_at IS NULL) AS null_time
+FROM `githubarchive.day.20240101`;

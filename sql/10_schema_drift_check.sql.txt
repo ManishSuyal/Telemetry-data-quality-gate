@@ -1,0 +1,17 @@
+-- 10: Batch-level schema check. Compare a table's columns to the contract.
+-- Result on the simulated release: 3 rows (1 retyped, 1 missing, 1 unexpected).
+
+
+
+SELECT COALESCE(c.column_name, a.column_name) AS column_name,
+       c.data_type AS expected, a.data_type AS actual,
+       CASE WHEN a.column_name IS NULL THEN 'missing_column'
+            WHEN c.column_name IS NULL THEN 'unexpected_column'
+            ELSE 'type_changed' END AS issue
+FROM `telemetry-data-quality-gate.Dq.schema_contract` c
+FULL OUTER JOIN (
+  SELECT column_name, data_type
+  FROM `telemetry-data-quality-gate.Dq.INFORMATION_SCHEMA.COLUMNS`
+  WHERE table_name = 'events_drifted'
+) a ON c.column_name = a.column_name
+WHERE a.column_name IS NULL OR c.column_name IS NULL OR c.data_type != a.data_type;

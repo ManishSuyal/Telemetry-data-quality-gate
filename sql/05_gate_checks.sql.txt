@@ -1,0 +1,15 @@
+-- 05: The gate. Each event is labelled by the FIRST check it fails.
+-- Order: missing field, then late, then duplicate. Otherwise "pass".
+
+CREATE OR REPLACE TABLE `telemetry-data-quality-gate.Dq.events_checked` AS
+SELECT *,
+  CASE
+    WHEN id IS NULL OR actor_id IS NULL OR repo_id IS NULL OR created_at IS NULL
+      THEN 'missing_field'
+    WHEN TIMESTAMP_DIFF(arrived_at, created_at, MINUTE) > 15
+      THEN 'late'
+    WHEN ROW_NUMBER() OVER (PARTITION BY id ORDER BY arrived_at) > 1
+      THEN 'duplicate'
+    ELSE 'pass'
+  END AS result
+FROM `telemetry-data-quality-gate.Dq.events_seeded`;

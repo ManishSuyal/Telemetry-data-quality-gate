@@ -1,0 +1,12 @@
+-- 04: Add simulated duplicates (~6.5% of clean rows re-sent one minute later).
+-- Done as a separate table so RAND() is not re-rolled and the answer key stays valid.
+
+
+CREATE OR REPLACE TABLE `telemetry-data-quality-gate.Dq.events_seeded` AS
+SELECT * FROM `telemetry-data-quality-gate.Dq.events_faulted`
+UNION ALL
+SELECT id, type, actor_id, repo_id, created_at,
+       TIMESTAMP_ADD(arrived_at, INTERVAL 1 MINUTE) AS arrived_at,
+       'duplicate' AS fault_label
+FROM `telemetry-data-quality-gate.Dq.events_faulted`
+WHERE fault_label = 'clean' AND RAND() < 0.065;

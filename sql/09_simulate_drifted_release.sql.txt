@@ -1,0 +1,9 @@
+-- 09: Simulate a release that changed the payload: actor_id retyped, repo_id renamed.
+
+CREATE OR REPLACE TABLE `telemetry-data-quality-gate.Dq.events_drifted` AS
+SELECT id, type,
+       CAST(actor_id AS STRING) AS actor_id,
+       repo_id AS repository_id,
+       created_at, arrived_at
+FROM `telemetry-data-quality-gate.Dq.events_seeded`
+LIMIT 1000;

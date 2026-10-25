@@ -1,0 +1,7 @@
+-- 07: North-star metric. Trusted Event Rate = events passing all checks / all events.
+
+SELECT
+  COUNT(*) AS total_events,
+  COUNTIF(result = 'pass') AS trusted_events,
+  ROUND(COUNTIF(result = 'pass') / COUNT(*) * 100, 1) AS trusted_event_rate_pct
+FROM `telemetry-data-quality-gate.Dq.events_checked`;

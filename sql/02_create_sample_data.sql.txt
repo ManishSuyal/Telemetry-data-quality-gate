@@ -1,0 +1,7 @@
+-- 02: Copy a ~5% sample into my own dataset so later queries stay fast and cheap.
+
+
+CREATE TABLE `telemetry-data-quality-gate.Dq.events_raw` AS
+SELECT id, type, actor.id AS actor_id, repo.id AS repo_id, created_at
+FROM `githubarchive.day.20240101`
+WHERE RAND() < 0.05;

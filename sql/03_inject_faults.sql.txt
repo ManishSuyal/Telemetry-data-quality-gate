@@ -1,0 +1,21 @@
+-- 03: Break the sample on purpose (SIMULATED faults) and keep an answer key.
+-- ~3.5% missing actor_id, ~9% late arrivals (20-60 min), rest arrive in 0-5 min.
+-- fault_label is the answer key. A real pipeline would not have this column.
+
+
+CREATE OR REPLACE TABLE `telemetry-data-quality-gate.Dq.events_faulted` AS
+WITH base AS (
+  SELECT id, type, actor_id, repo_id, created_at,
+         RAND() AS r1, RAND() AS r2, RAND() AS r3
+  FROM `telemetry-data-quality-gate.Dq.events_raw`
+)
+SELECT
+  id, type,
+  IF(r1 < 0.035, NULL, actor_id) AS actor_id,
+  repo_id, created_at,
+  TIMESTAMP_ADD(created_at, INTERVAL
+    IF(r2 < 0.09, 20 + CAST(r3 * 40 AS INT64), CAST(r3 * 5 AS INT64)) MINUTE) AS arrived_at,
+  CASE WHEN r1 < 0.035 THEN 'missing_field'
+       WHEN r2 < 0.09  THEN 'late'
+       ELSE 'clean' END AS fault_label
+FROM base;
