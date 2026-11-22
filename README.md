@@ -115,8 +115,5 @@ The schema check compared a simulated release against the saved contract and fla
 2. Replace `YOUR_PROJECT` in each file with your project ID.
 3. Run the files in `sql/` in numeric order, one at a time.
 
-## Why I built it
-
-At Deloitte I built a real-time API data integration with data-quality checks that cut manual reconciliation from 2 days to 10 minutes. This project applies the same thinking to telemetry-style data, and shows how I define a metric, test it, and decide what to fix first.
 
 *Manish Suyal*
