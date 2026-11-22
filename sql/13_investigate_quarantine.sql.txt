@@ -1,0 +1,33 @@
+-- 13: How an engineer would investigate held-back events. Run each block separately.
+
+-- a) Counts by failure reason (should total 34,716 in my run)
+SELECT result, COUNT(*) AS events
+FROM `telemetry-data-quality-gate.Dq.events_quarantine`
+GROUP BY result
+ORDER BY events DESC;
+
+-- b) Late events: how late?
+SELECT id, created_at, arrived_at,
+       TIMESTAMP_DIFF(arrived_at, created_at, MINUTE) AS minutes_late
+FROM `telemetry-data-quality-gate.Dq.events_quarantine`
+WHERE result = 'late'
+ORDER BY minutes_late DESC
+LIMIT 20;
+
+-- c) Missing fields: which field is empty?
+SELECT id, type,
+       actor_id IS NULL   AS actor_missing,
+       repo_id IS NULL    AS repo_missing,
+       created_at IS NULL AS time_missing
+FROM `telemetry-data-quality-gate.Dq.events_quarantine`
+WHERE result = 'missing_field'
+LIMIT 20;
+
+-- d) Duplicates: each repeat next to its original
+SELECT t.id,
+       t.arrived_at AS original_arrived,
+       q.arrived_at AS duplicate_arrived
+FROM `Ytelemetry-data-quality-gate.Dq.events_quarantine` q
+JOIN `telemetry-data-quality-gate.Dq.events_trusted` t ON q.id = t.id
+WHERE q.result = 'duplicate'
+LIMIT 20;

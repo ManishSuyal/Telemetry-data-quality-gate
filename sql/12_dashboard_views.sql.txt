@@ -1,0 +1,24 @@
+-- 12: Helper views for the Looker Studio dashboard.
+-- events_dashboard: adds delay in minutes and a delay bucket; leaves out the answer-key column.
+CREATE OR REPLACE VIEW `telemetry-data-quality-gate.Dq.events_dashboard` AS
+SELECT *,
+  CASE
+    WHEN delay_minutes <= 5  THEN '1: 0-5 min'
+    WHEN delay_minutes <= 15 THEN '2: 6-15 min'
+    WHEN delay_minutes <= 30 THEN '3: 16-30 min'
+    WHEN delay_minutes <= 45 THEN '4: 31-45 min'
+    ELSE '5: 46+ min'
+  END AS delay_bucket
+FROM (
+  SELECT * EXCEPT (fault_label),
+         TIMESTAMP_DIFF(arrived_at, created_at, MINUTE) AS delay_minutes
+  FROM `telemetry-data-quality-gate.Dq.events_checked`
+);
+
+-- gate_comparison: events counted without the gate vs. with the gate.
+CREATE OR REPLACE VIEW `telemetry-data-quality-gate.Dq.gate_comparison` AS
+SELECT '1: Without gate' AS view_name, COUNT(*) AS events
+FROM `telemetry-data-quality-gate.Dq.events_checked`
+UNION ALL
+SELECT '2: With gate', COUNTIF(result = 'pass')
+FROM `telemetry-data-quality-gate.Dq.events_checked`;
