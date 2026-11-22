@@ -4,7 +4,7 @@ A checkpoint that tests every event before it reaches a dashboard, plus one metr
 
 **Dashboard:** `https://datastudio.google.com/reporting/d792e8d5-4ffb-4277-a79c-923650a505e9` | **Live page:** https://claude.ai/artifact/VgHctVZjK1XqXhFeMxCyNh 
 
-**Dashboard img:** 
+**Dashboard :** 
 
 <img width="799" height="601" alt="Screenshot 2026-11-22 at 12 08 17 PM" src="https://github.com/user-attachments/assets/415eb920-903c-44b8-9f8a-0223cd5a9535" />
 
